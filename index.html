@@ -4,12 +4,145 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>One-Time Pad Encryptor</title>
-  <script src="OneTimePadEncryptor.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    .container {
+      max-width: 500px;
+      margin: auto;
+      padding: 20px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    .input-group {
+      margin-bottom: 15px;
+    }
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+    input {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    .error {
+      color: red;
+      font-size: 14px;
+      margin-top: 10px;
+    }
+    .buttons {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+    button {
+      padding: 10px 15px;
+      border: none;
+      border-radius: 5px;
+      color: white;
+      cursor: pointer;
+    }
+    .encrypt-btn {
+      background-color: #007bff;
+    }
+    .decrypt-btn {
+      background-color: #28a745;
+    }
+  </style>
 </head>
 <body>
-  <h1>One-Time Pad Encryptor</h1>
-  <p>This is a one-time pad encryption and decryption tool.</p>
-  <p>If you see this text, the HTML is loading correctly.</p>
-  <!-- 添加更多HTML和JavaScript内容以测试功能 -->
+
+<div class="container">
+  <h2>One-Time Pad Encryptor</h2>
+  
+  <div class="input-group">
+    <label for="plaintext">Plaintext</label>
+    <input type="text" id="plaintext" placeholder="Enter or view plaintext">
+  </div>
+  
+  <div class="input-group">
+    <label for="key">Key</label>
+    <input type="text" id="key" placeholder="Enter key">
+  </div>
+  
+  <div class="input-group">
+    <label for="ciphertext">Ciphertext</label>
+    <input type="text" id="ciphertext" placeholder="Enter or view ciphertext">
+  </div>
+  
+  <div class="error" id="error"></div>
+  
+  <div class="buttons">
+    <button class="encrypt-btn" onclick="encrypt()">Encrypt</button>
+    <button class="decrypt-btn" onclick="decrypt()">Decrypt</button>
+  </div>
+</div>
+
+<script>
+  function encrypt() {
+    const plaintext = document.getElementById("plaintext").value.toUpperCase();
+    const key = document.getElementById("key").value.toUpperCase();
+    const errorElement = document.getElementById("error");
+
+    if (plaintext.length !== key.length) {
+      errorElement.textContent = "Input error: Plaintext and key must have the same length.";
+      return;
+    }
+
+    errorElement.textContent = "";
+    const ciphertextChars = [];
+
+    for (let i = 0; i < plaintext.length; i++) {
+      const plaintextNum = plaintext.charCodeAt(i) >= 65 && plaintext.charCodeAt(i) <= 90
+        ? plaintext.charCodeAt(i) - 65
+        : 0;
+      const keyNum = key.charCodeAt(i) >= 65 && key.charCodeAt(i) <= 90
+        ? key.charCodeAt(i) - 65
+        : 0;
+      const ciphertextNum = (plaintextNum + keyNum) % 26;
+      ciphertextChars.push(String.fromCharCode(ciphertextNum + 65));
+    }
+
+    document.getElementById("ciphertext").value = ciphertextChars.join("");
+  }
+
+  function decrypt() {
+    const ciphertext = document.getElementById("ciphertext").value.toUpperCase();
+    const key = document.getElementById("key").value.toUpperCase();
+    const errorElement = document.getElementById("error");
+
+    if (ciphertext.length !== key.length) {
+      errorElement.textContent = "Input error: Ciphertext and key must have the same length.";
+      return;
+    }
+
+    errorElement.textContent = "";
+    const plaintextChars = [];
+
+    for (let i = 0; i < ciphertext.length; i++) {
+      const ciphertextNum = ciphertext.charCodeAt(i) >= 65 && ciphertext.charCodeAt(i) <= 90
+        ? ciphertext.charCodeAt(i) - 65
+        : 0;
+      const keyNum = key.charCodeAt(i) >= 65 && key.charCodeAt(i) <= 90
+        ? key.charCodeAt(i) - 65
+        : 0;
+      let plaintextNum = ciphertextNum - keyNum;
+      if (plaintextNum < 0) {
+        plaintextNum += 26;
+      }
+      plaintextChars.push(String.fromCharCode(plaintextNum + 65));
+    }
+
+    document.getElementById("plaintext").value = plaintextChars.join("");
+  }
+</script>
+
 </body>
 </html>
