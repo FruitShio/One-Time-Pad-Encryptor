@@ -12,13 +12,20 @@
     .container {
       max-width: 500px;
       margin: auto;
-      padding: 20px;
+      padding: 20px 30px;
       border: 1px solid #ddd;
       border-radius: 5px;
       box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     }
     .input-group {
       margin-bottom: 15px;
+      position: relative;
+    }
+    .key-group {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 5px;
     }
     label {
       display: block;
@@ -31,6 +38,7 @@
       margin-top: 5px;
       border: 1px solid #ccc;
       border-radius: 5px;
+      box-sizing: border-box;
     }
     .error {
       color: red;
@@ -39,8 +47,8 @@
     }
     .buttons {
       display: flex;
-      justify-content: flex-end;
-      gap: 10px;
+      justify-content: space-between;
+      margin-top: 20px;
     }
     button {
       padding: 10px 15px;
@@ -48,12 +56,31 @@
       border-radius: 5px;
       color: white;
       cursor: pointer;
+      width: 160px; /* 统一按钮宽度 */
+      height: 40px; /* 统一按钮高度 */
+    }
+    button:disabled {
+      background-color: #cccccc !important;
+      cursor: not-allowed;
     }
     .encrypt-btn {
-      background-color: #007bff;
+      background-color: #4FA5D6;
     }
     .decrypt-btn {
-      background-color: #28a745;
+      background-color: #66BA63;
+    }
+    .generate-key-btn {
+      background-color: #F0C960;
+      white-space: nowrap;
+    }
+    .key-section {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 5px;
+    }
+    .key-label {
+      font-weight: bold;
     }
   </style>
 </head>
@@ -64,11 +91,14 @@
   
   <div class="input-group">
     <label for="plaintext">Plaintext</label>
-    <input type="text" id="plaintext" placeholder="Enter or view plaintext">
+    <input type="text" id="plaintext" placeholder="Enter or view plaintext" oninput="checkPlaintext()">
   </div>
   
   <div class="input-group">
-    <label for="key">Key</label>
+    <div class="key-section">
+      <div class="key-label">Key</div>
+      <button id="generateKey" class="generate-key-btn" disabled onclick="generateRandomKey()">Generate Random Key</button>
+    </div>
     <input type="text" id="key" placeholder="Enter key">
   </div>
   
@@ -86,6 +116,25 @@
 </div>
 
 <script>
+  function checkPlaintext() {
+    const plaintext = document.getElementById("plaintext").value;
+    const generateKeyBtn = document.getElementById("generateKey");
+    generateKeyBtn.disabled = plaintext.length === 0;
+  }
+
+  function generateRandomKey() {
+    const plaintext = document.getElementById("plaintext").value;
+    const keyLength = plaintext.length;
+    let randomKey = '';
+    
+    for (let i = 0; i < keyLength; i++) {
+      const randomChar = String.fromCharCode(65 + Math.floor(Math.random() * 26));
+      randomKey += randomChar;
+    }
+    
+    document.getElementById("key").value = randomKey;
+  }
+
   function encrypt() {
     const plaintext = document.getElementById("plaintext").value.toUpperCase();
     const key = document.getElementById("key").value.toUpperCase();
